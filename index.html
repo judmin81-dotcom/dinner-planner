@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2c1810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dinner Planner">
+<title>Dinner Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brown-dark:  #2c1810;
+    --brown-mid:   #8b6f5e;
+    --brown-light: #c4a99a;
+    --cream:       #fffaf6;
+    --cream-bg:    #fdf7f2;
+    --border:      #f0e8de;
+    --border-inp:  #e8ddd5;
+    --orange:      #f97316;
+    --orange-light:#fff1e6;
+    --orange-pale: #fbd5b5;
+    --green:       #22c55e;
+    --green-dark:  #16a34a;
+    --green-bg:    #f0fdf4;
+    --green-border:#86efac;
+    --red:         #dc2626;
+    --red-bg:      #fee2e2;
+    --yellow:      #eab308;
+    --slate:       #94a3b8;
+    --font-serif:  'Playfair Display', Georgia, serif;
+    --font-sans:   'Lato', 'Segoe UI', sans-serif;
+    --radius:      14px;
+    --shadow-modal:0 24px 80px rgba(0,0,0,0.28);
+  }
+
+  html, body { height: 100%; }
+  body { font-family: var(--font-sans); background: var(--cream-bg); color: var(--brown-dark); -webkit-tap-highlight-color: transparent; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-inp); border-radius: 99px; }
+
+  /* ── Header ── */
+  #header {
+    background: var(--brown-dark);
+    padding: 18px 20px 0;
+    position: sticky; top: 0; z-index: 50;
+  }
+  #header-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  #logo-icon { background: var(--orange); border-radius: 12px; padding: 8px; display: flex; flex-shrink: 0; }
+  #app-title { font-family: var(--font-serif); font-size: 22px; color: var(--cream); font-weight: 700; line-height: 1.1; }
+  #recipe-count { font-size: 12px; color: var(--brown-light); margin-top: 2px; }
+  #export-btn {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 9px; padding: 7px 10px; cursor: pointer; display: flex; align-items: center;
+    margin-left: auto; flex-shrink: 0; transition: background 0.15s;
+  }
+  #export-btn:hover { background: rgba(255,255,255,0.18); }
+
+  /* ── Tabs ── */
+  #tabs { display: flex; }
+  .tab-btn {
+    flex: 1; padding: 12px 0; background: transparent; border: none;
+    border-bottom: 3px solid transparent; color: var(--brown-mid);
+    font-family: var(--font-sans); font-weight: 700; font-size: 13px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
+    transition: color 0.15s, border-color 0.15s; letter-spacing: 0.02em;
+  }
+  .tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+  .tab-btn svg { transition: stroke 0.15s; }
+
+  /* ── Content ── */
+  #content { padding: 20px 16px; max-width: 700px; margin: 0 auto; }
+
+  /* ── Search + Add row ── */
+  .search-row { display: flex; gap: 10px; margin-bottom: 14px; }
+  .search-inp {
+    flex: 1; padding: 10px 14px; border: 1.5px solid var(--border-inp);
+    border-radius: 10px; font-size: 14px; font-family: var(--font-sans);
+    background: var(--cream); color: var(--brown-dark); outline: none; transition: border-color 0.15s;
+  }
+  .search-inp:focus { border-color: var(--orange); }
+  .btn-primary {
+    background: var(--orange); color: #fff; border: none; border-radius: 10px;
+    padding: 10px 18px; font-weight: 700; font-size: 14px; font-family: var(--font-sans);
+    cursor: pointer; display: flex; align-items: center; gap: 7px; white-space: nowrap;
+    transition: background 0.15s; flex-shrink: 0;
+  }
+  .btn-primary:hover { background: #ea6a05; }
+
+  /* ── Category filters ── */
+  .cat-filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
+  .cat-pill {
+    padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border-inp);
+    background: var(--cream); color: var(--brown-mid); font-weight: 600; font-size: 12px;
+    cursor: pointer; font-family: var(--font-sans); transition: all 0.12s;
+  }
+  .cat-pill.active { border: 2px solid var(--orange); background: var(--orange-light); color: var(--orange); }
+  .manage-btn {
+    margin-left: auto; background: #f8f0e8; border: 1.5px solid var(--border-inp);
+    border-radius: 20px; padding: 6px 12px; cursor: pointer; color: var(--brown-mid);
+    display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600;
+    font-family: var(--font-sans); transition: background 0.15s;
+  }
+  .manage-btn:hover { background: var(--border); }
+
+  /* ── Recipe Card ── */
+  .recipe-card {
+    background: var(--cream); border: 1.5px solid var(--border); border-radius: var(--radius);
+    padding: 18px 20px; cursor: pointer; transition: box-shadow 0.2s, transform 0.2s;
+    margin-bottom: 10px;
+  }
+  .recipe-card:hover { box-shadow: 0 8px 32px rgba(249,115,22,0.12); transform: translateY(-2px); }
+  .recipe-card:last-child { margin-bottom: 0; }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .card-title { font-family: var(--font-serif); font-size: 16px; color: var(--brown-dark); line-height: 1.3; margin-bottom: 2px; }
+  .card-link-hint { font-size: 11px; color: var(--slate); display: flex; align-items: center; gap: 3px; }
+  .card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .icon-btn { border: none; border-radius: 7px; padding: 5px 8px; cursor: pointer; display: flex; align-items: center; transition: background 0.15s; }
+  .icon-btn-edit { background: #f8f0e8; color: var(--brown-mid); }
+  .icon-btn-edit:hover { background: var(--border); }
+  .icon-btn-del { background: var(--red-bg); color: var(--red); }
+  .icon-btn-del:hover { background: #fecaca; }
+  .card-meta { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+  .meta-pill { font-size: 12px; color: var(--brown-mid); }
+  .freshness { font-size: 12px; font-weight: 600; margin-left: auto; }
+
+  /* ── Category tag ── */
+  .cat-tag { border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.03em; border: 1px solid; display: inline-block; }
+
+  /* ── Empty state ── */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--brown-light); }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-title { font-family: var(--font-serif); font-size: 18px; color: var(--brown-mid); margin-bottom: 6px; }
+
+  /* ── Modal overlay ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(15,10,5,0.65); z-index: 100;
+    display: flex; align-items: center; justify-content: center; padding: 16px;
+    animation: fadeIn 0.15s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+  .modal-box {
+    background: var(--cream); border-radius: 16px; width: 100%; max-height: 90vh;
+    overflow-y: auto; box-shadow: var(--shadow-modal); border: 1px solid var(--border);
+    animation: slideUp 0.18s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(16px); opacity: 0 } to { transform: none; opacity: 1 } }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px 16px; border-bottom: 1px solid var(--border); position: sticky; top: 0;
+    background: var(--cream); z-index: 1; border-radius: 16px 16px 0 0;
+  }
+  .modal-title { font-family: var(--font-serif); font-size: 18px; color: var(--brown-dark); font-weight: 700; }
+  .modal-close { background: none; border: none; cursor: pointer; color: var(--slate); padding: 4px; border-radius: 6px; display: flex; transition: color 0.15s; }
+  .modal-close:hover { color: var(--brown-mid); }
+  .modal-body { padding: 20px 24px 24px; }
+
+  /* ── Form fields ── */
+  .field { margin-bottom: 16px; }
+  .field-label { display: block; font-size: 12px; font-weight: 700; color: var(--brown-mid); margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .field-req { color: var(--orange); }
+  .field-hint { font-weight: 400; text-transform: none; font-size: 11px; color: var(--brown-light); }
+  .inp {
+    width: 100%; padding: 9px 12px; border: 1.5px solid var(--border-inp); border-radius: 8px;
+    font-size: 14px; font-family: var(--font-sans); background: #fff; color: var(--brown-dark);
+    outline: none; transition: border-color 0.15s;
+  }
+  .inp:focus { border-color: var(--orange); }
+  .inp-icon-wrap { position: relative; }
+  .inp-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--brown-light); display: flex; pointer-events: none; }
+  .inp-padded { padding-left: 32px; }
+  .field-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  textarea.inp { resize: vertical; min-height: 80px; }
+  .ing-row { display: flex; gap: 8px; margin-bottom: 6px; }
+  .ing-row .inp { flex: 1; }
+  .ing-del { background: var(--red-bg); color: var(--red); border: none; border-radius: 6px; padding: 0 10px; cursor: pointer; display: flex; align-items: center; }
+  .cat-error { font-size: 12px; color: var(--orange); margin-top: 6px; }
+  .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+  .btn-secondary {
+    padding: 10px 20px; border: 1.5px solid var(--border-inp); border-radius: 8px;
+    background: #fff; color: var(--brown-mid); cursor: pointer; font-weight: 600;
+    font-size: 14px; font-family: var(--font-sans); transition: background 0.15s;
+  }
+  .btn-secondary:hover { background: var(--cream-bg); }
+  .btn-save {
+    padding: 10px 22px; border: none; border-radius: 8px; color: #fff;
+    font-weight: 700; font-size: 14px; font-family: var(--font-sans); cursor: pointer; transition: background 0.15s;
+  }
+
+  /* ── Category picker ── */
+  .cat-picker { display: flex; flex-wrap: wrap; gap: 7px; }
+  .cat-pick-btn {
+    padding: 5px 13px; border-radius: 20px; font-size: 12px; font-family: var(--font-sans);
+    cursor: pointer; transition: all 0.12s; font-weight: 500;
+  }
+
+  /* ── Recipe detail ── */
+  .detail-meta { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 16px; }
+  .meta-badge { background: #f8f0e8; border-radius: 20px; padding: 3px 10px; font-size: 12px; color: var(--brown-mid); }
+  .recipe-link-btn {
+    display: flex; align-items: center; gap: 8px; background: #f0f9ff;
+    border: 1.5px solid #bae6fd; border-radius: 10px; padding: 10px 14px;
+    margin-bottom: 18px; text-decoration: none; color: #0369a1; font-size: 13px; font-weight: 600;
+    transition: background 0.15s;
+  }
+  .recipe-link-btn:hover { background: #e0f2fe; }
+  .recipe-link-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .recipe-link-arrow { font-size: 11px; flex-shrink: 0; opacity: 0.7; }
+  .section-label { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--brown-mid); font-weight: 700; margin-bottom: 10px; }
+  .ingredients-list { padding-left: 18px; margin-bottom: 0; }
+  .ingredients-list li { margin-bottom: 5px; font-size: 14px; }
+  .steps-text { font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+  .notes-box { background: #fffbf0; border: 1px solid #fde68a; border-radius: 10px; padding: 12px 14px; margin-bottom: 18px; }
+  .notes-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: #92400e; font-weight: 700; margin-bottom: 6px; }
+  .notes-text { font-size: 13px; color: #78350f; line-height: 1.6; }
+  .detail-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .btn-detail {
+    flex: 1; padding: 11px 16px; border-radius: 10px; font-weight: 700; font-size: 14px;
+    font-family: var(--font-sans); cursor: pointer; display: flex; align-items: center;
+    justify-content: center; gap: 7px; transition: all 0.15s; border: none; min-width: 120px;
+  }
+  .btn-shopping { background: var(--orange); color: #fff; }
+  .btn-shopping:hover { background: #ea6a05; }
+  .btn-plan { background: var(--cream); color: var(--orange); border: 2px solid var(--orange) !important; }
+  .btn-plan:hover { background: var(--orange-light); }
+  .btn-cooked { background: var(--green-bg); color: #16a34a; border: 2px solid var(--green-border) !important; flex: 0; }
+  .btn-cooked:hover { background: #dcfce7; }
+
+  /* ── Shopping checklist ── */
+  .checklist-hint { font-size: 13px; color: var(--brown-mid); line-height: 1.5; margin-bottom: 14px; }
+  .toggle-all-btn {
+    background: none; border: 1.5px solid var(--border-inp); border-radius: 8px;
+    padding: 7px 14px; font-size: 12px; font-weight: 600; color: var(--brown-mid);
+    cursor: pointer; font-family: var(--font-sans); margin-bottom: 14px; transition: background 0.15s;
+  }
+  .toggle-all-btn:hover { background: var(--cream-bg); }
+  .checklist-items { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+  .check-item {
+    display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+    border-radius: 10px; cursor: pointer; transition: all 0.15s; user-select: none;
+    border: 1.5px solid var(--border);  background: var(--cream);
+  }
+  .check-item.checked { background: #f1f5f9; border-color: #e2e8f0; }
+  .check-box {
+    width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--orange);
+    background: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .check-box.checked { background: var(--slate); border-color: var(--slate); }
+  .check-label { font-size: 14px; transition: all 0.15s; flex: 1; }
+  .check-label.checked { color: var(--slate); text-decoration: line-through; }
+  .pantry-badge { font-size: 11px; color: var(--slate); flex-shrink: 0; }
+  .checklist-summary {
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; font-size: 13px; font-weight: 600;
+    border: 1.5px solid;
+  }
+  .checklist-summary.needs { background: #fff7ed; border-color: #fed7aa; color: #c2410c; }
+  .checklist-summary.done  { background: var(--green-bg); border-color: var(--green-border); color: #15803d; }
+  .checklist-actions { display: flex; gap: 10px; }
+  .btn-copy {
+    flex: 1; padding: 11px 16px; border: none; border-radius: 10px; font-weight: 700;
+    font-size: 14px; font-family: var(--font-sans); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 7px; transition: background 0.2s;
+  }
+  .btn-copy.active { background: var(--orange); color: #fff; }
+  .btn-copy.active:hover { background: #ea6a05; }
+  .btn-copy.copied { background: var(--green); color: #fff; }
+  .btn-copy.disabled { background: #e2e8f0; color: var(--slate); cursor: default; }
+
+  /* ── Week Planner ── */
+  .planner-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .planner-title { font-family: var(--font-serif); font-size: 22px; color: var(--brown-dark); font-weight: 700; }
+  .btn-copy-all {
+    background: var(--orange); color: #fff; border: none; border-radius: 9px;
+    padding: 9px 16px; font-weight: 700; font-size: 13px; font-family: var(--font-sans);
+    cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.15s;
+  }
+  .btn-copy-all:hover { background: #ea6a05; }
+  .day-rows { display: flex; flex-direction: column; gap: 10px; }
+  .day-row {
+    background: var(--cream); border: 1.5px solid var(--border); border-radius: var(--radius);
+    padding: 14px 18px; display: flex; align-items: center; gap: 14px;
+  }
+  .day-label { width: 90px; font-size: 13px; font-weight: 700; color: var(--brown-mid); text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; }
+  .day-empty-btn {
+    flex: 1; background: transparent; border: 1.5px dashed var(--border-inp); border-radius: 10px;
+    padding: 10px; cursor: pointer; color: var(--brown-light); font-size: 13px;
+    font-weight: 500; text-align: left; font-family: var(--font-sans); transition: border-color 0.15s;
+  }
+  .day-empty-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .day-filled { flex: 1; display: flex; align-items: center; gap: 12px; }
+  .day-recipe-name { font-weight: 600; font-size: 15px; color: var(--brown-dark); font-family: var(--font-serif); }
+  .day-recipe-cats { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .day-done-btn {
+    background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 7px;
+    padding: 5px 9px; cursor: pointer; color: #16a34a; font-size: 12px; font-weight: 600;
+    font-family: var(--font-sans); flex-shrink: 0; transition: background 0.15s;
+  }
+  .day-done-btn:hover { background: #dcfce7; }
+  .day-remove-btn {
+    background: var(--red-bg); border: none; border-radius: 7px; padding: 5px 9px;
+    cursor: pointer; color: var(--red); display: flex; flex-shrink: 0; transition: background 0.15s;
+  }
+  .day-remove-btn:hover { background: #fecaca; }
+
+  /* ── Recipe picker (in planner) ── */
+  .recipe-pick-list { display: flex; flex-direction: column; gap: 8px; max-height: 360px; overflow-y: auto; }
+  .recipe-pick-btn {
+    background: var(--cream); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 12px 14px; cursor: pointer; text-align: left; display: flex;
+    justify-content: space-between; align-items: center; gap: 10px; width: 100%;
+    font-family: var(--font-sans); transition: background 0.15s;
+  }
+  .recipe-pick-btn:hover { background: var(--orange-light); border-color: var(--orange); }
+  .pick-name { font-weight: 600; font-size: 14px; color: var(--brown-dark); margin-bottom: 5px; }
+
+  /* ── Day picker modal ── */
+  .day-pick-list { display: flex; flex-direction: column; gap: 8px; }
+  .day-pick-btn {
+    padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px;
+    cursor: pointer; text-align: left; font-size: 14px; font-weight: 600;
+    color: var(--brown-dark); display: flex; justify-content: space-between;
+    background: var(--cream); font-family: var(--font-sans); transition: background 0.15s;
+  }
+  .day-pick-btn:hover { background: var(--orange-light); border-color: var(--orange); }
+  .day-pick-btn.occupied { background: var(--red-bg); }
+  .day-replaces { font-size: 12px; color: var(--red); }
+
+  /* ── Cat manager ── */
+  .cat-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .cat-list-item {
+    display: flex; align-items: center; gap: 8px; background: var(--cream);
+    border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 12px;
+  }
+  .cat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .cat-name { flex: 1; font-size: 14px; font-weight: 500; }
+  .add-cat-row { display: flex; gap: 8px; margin-bottom: 20px; }
+  .btn-add-cat {
+    background: var(--orange); color: #fff; border: none; border-radius: 8px;
+    padding: 9px 16px; font-weight: 700; cursor: pointer; font-size: 14px;
+    font-family: var(--font-sans); transition: background 0.15s;
+  }
+  .btn-add-cat:hover { background: #ea6a05; }
+
+  /* ── Export/Import ── */
+  .export-box { background: var(--green-bg); border: 1.5px solid var(--green-border); border-radius: 12px; padding: 16px 18px; margin-bottom: 20px; }
+  .export-title { font-family: var(--font-serif); font-size: 15px; color: #15803d; margin-bottom: 6px; }
+  .export-hint { font-size: 13px; color: #166534; line-height: 1.5; margin-bottom: 14px; }
+  .import-box { background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: 12px; padding: 16px 18px; }
+  .import-title { font-family: var(--font-serif); font-size: 15px; color: #c2410c; margin-bottom: 6px; }
+  .import-hint { font-size: 13px; color: #9a3412; line-height: 1.5; margin-bottom: 14px; }
+  .btn-green { background: var(--green-dark); color: #fff; border: none; border-radius: 9px; padding: 10px 18px; font-weight: 700; font-size: 14px; font-family: var(--font-sans); cursor: pointer; display: flex; align-items: center; gap: 7px; transition: background 0.15s; }
+  .btn-green:hover { background: #15803d; }
+  .btn-import { background: var(--orange); color: #fff; border: none; border-radius: 9px; padding: 10px 18px; font-weight: 700; font-size: 14px; font-family: var(--font-sans); cursor: pointer; display: flex; align-items: center; gap: 7px; transition: background 0.15s; }
+  .btn-import:hover { background: #ea6a05; }
+  .file-drop {
+    display: flex; align-items: center; gap: 10px; background: var(--cream);
+    border: 1.5px dashed var(--orange); border-radius: 10px; padding: 12px 16px;
+    cursor: pointer; transition: background 0.15s; margin-bottom: 12px;
+  }
+  .file-drop:hover { background: var(--orange-light); }
+  .file-drop-label { font-size: 13px; color: var(--orange); font-weight: 600; }
+  .import-or { font-size: 12px; color: var(--brown-mid); text-align: center; margin-bottom: 12px; }
+  .import-error { background: var(--red-bg); border: 1px solid #fca5a5; border-radius: 8px; padding: 10px 12px; font-size: 13px; color: var(--red); margin-bottom: 12px; }
+  .import-preview { background: var(--green-bg); border: 1.5px solid var(--green-border); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+  .import-preview-text { font-size: 13px; color: #15803d; font-weight: 600; margin-bottom: 10px; }
+  .confirm-row { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; }
+  .confirm-row input { margin-top: 2px; }
+  .confirm-label { font-size: 12px; color: #166534; line-height: 1.5; }
+  .import-actions { display: flex; gap: 10px; margin-top: 12px; }
+  .btn-confirm { flex: 1; padding: 10px 16px; border: none; border-radius: 9px; font-weight: 700; font-size: 13px; font-family: var(--font-sans); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: background 0.15s; }
+  .btn-confirm.ready { background: var(--orange); color: #fff; }
+  .btn-confirm.ready:hover { background: #ea6a05; }
+  .btn-confirm.disabled { background: #e2e8f0; color: var(--slate); cursor: default; }
+
+  /* ── Export JSON textarea ── */
+  .export-json {
+    width: 100%; min-height: 120px; padding: 10px 12px;
+    border: 1.5px solid var(--green-border); border-radius: 8px;
+    font-size: 11px; font-family: monospace; background: #fff; color: #166534;
+    resize: vertical; outline: none; margin-bottom: 8px;
+  }
+  .export-json-hint { font-size: 12px; color: #166534; }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--brown-dark); color: var(--cream); padding: 12px 24px;
+    border-radius: 30px; font-size: 14px; font-weight: 600; z-index: 200;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25); white-space: nowrap;
+    transition: transform 0.3s ease, opacity 0.3s ease; opacity: 0; pointer-events: none;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ── PWA install banner ── */
+  #install-banner {
+    background: var(--brown-dark); color: var(--cream); padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px; font-size: 13px;
+  }
+  #install-banner span { flex: 1; }
+  #install-btn { background: var(--orange); color: #fff; border: none; border-radius: 7px; padding: 6px 14px; font-weight: 700; cursor: pointer; font-family: var(--font-sans); }
+  #install-dismiss { background: none; border: none; color: var(--brown-light); cursor: pointer; font-size: 18px; line-height: 1; }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .modal-body { padding: 16px 18px 20px; }
+    .field-grid-2 { grid-template-columns: 1fr; }
+    .detail-actions { flex-direction: column; }
+    .btn-detail { min-width: unset; }
+    .btn-cooked { flex: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div id="install-banner" style="display:none">
+  <span>📱 Add Dinner Planner to your home screen</span>
+  <button id="install-btn">Install</button>
+  <button id="install-dismiss">×</button>
+</div>
+
+<div id="header">
+  <div id="header-top">
+    <div id="logo-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4z"/></svg>
+    </div>
+    <div>
+      <div id="app-title">Dinner Planner</div>
+      <div id="recipe-count">Loading…</div>
+    </div>
+    <button id="export-btn" title="Export / Import data">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c4a99a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+    </button>
+  </div>
+  <div id="tabs">
+    <button class="tab-btn active" data-tab="recipes">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/></svg>
+      Recipes
+    </button>
+    <button class="tab-btn" data-tab="planner">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>
+      Week Planner
+    </button>
+  </div>
+</div>
+
+<div id="content"></div>
+<div id="modal-root"></div>
+<div id="toast"></div>
+
+<script>
+// ── Constants ────────────────────────────────────────────────────────────────
+const DEFAULT_CATS = ["BBQ & Grill","Italian","Asian","Quick & Easy","Pasta"];
+const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const SK = { recipes:"dp_recipes", plan:"dp_plan", cats:"dp_categories" };
+
+const BASE_COLORS = {
+  "BBQ & Grill":  { bg:"#fff0e6", border:"#f97316", text:"#c2410c" },
+  "Italian":      { bg:"#fef2f2", border:"#ef4444", text:"#b91c1c" },
+  "Asian":        { bg:"#f0fdf4", border:"#22c55e", text:"#15803d" },
+  "Quick & Easy": { bg:"#fefce8", border:"#eab308", text:"#a16207" },
+  "Pasta":        { bg:"#faf5ff", border:"#a855f7", text:"#7e22ce" },
+};
+const EXTRA_COLORS = [
+  { bg:"#fdf2f8", border:"#d946ef", text:"#86198f" },
+  { bg:"#f0f9ff", border:"#0ea5e9", text:"#0369a1" },
+  { bg:"#fff1f2", border:"#f43f5e", text:"#be123c" },
+  { bg:"#f7fee7", border:"#84cc16", text:"#3f6212" },
+  { bg:"#fefce8", border:"#f59e0b", text:"#92400e" },
+  { bg:"#f0fdfa", border:"#14b8a6", text:"#0f766e" },
+];
+
+// SVG icon paths
+const I = {
+  plus:     "M12 5v14M5 12h14",
+  trash:    "M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6",
+  edit:     "M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z",
+  copy:     "M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2M8 4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2M8 4h8",
+  x:        "M18 6L6 18M6 6l12 12",
+  check:    "M20 6L9 17l-5-5",
+  link:     "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71",
+  settings: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z",
+  download: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",
+  upload:   "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12",
+  cart:     "M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0",
+  cal:      "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+};
+
+function icon(key, size=16, color="currentColor") {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${I[key]}"/></svg>`;
+}
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+function load(key) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch { return null; } }
+function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let state = {
+  recipes: [],
+  plan: {},
+  categories: [...DEFAULT_CATS],
+  tab: "recipes",
+  catFilter: "All",
+  search: "",
+};
+
+function init() {
+  const r = load(SK.recipes); if (r) state.recipes = r;
+  const p = load(SK.plan);    if (p) state.plan = p;
+  const c = load(SK.cats);    if (c) state.categories = c;
+  render();
+}
+
+function saveRecipes() { save(SK.recipes, state.recipes); }
+function savePlan()    { save(SK.plan,    state.plan);    }
+function saveCats()    { save(SK.cats,    state.categories); }
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function catColor(cat) {
+  if (BASE_COLORS[cat]) return BASE_COLORS[cat];
+  const idx = state.categories.indexOf(cat);
+  return EXTRA_COLORS[Math.max(idx,0) % EXTRA_COLORS.length];
+}
+function recipeCats(r) {
+  if (r.categories?.length) return r.categories;
+  if (r.category) return [r.category];
+  return [];
+}
+function daysSince(d) { if (!d) return null; return Math.floor((Date.now() - new Date(d).getTime()) / 86400000); }
+function freshness(days) {
+  if (days === null) return { label:"Never cooked", color:"#94a3b8" };
+  if (days === 0)    return { label:"Today",        color:"#22c55e" };
+  if (days <= 7)     return { label:`${days}d ago`, color:"#f97316" };
+  if (days <= 21)    return { label:`${days}d ago`, color:"#eab308" };
+  return                    { label:`${days}d ago`, color:"#94a3b8" };
+}
+function ensureUrl(url) { if (!url) return ""; return /^https?:\/\//i.test(url) ? url : "https://" + url; }
+function catTagsHtml(cats, max=99) {
+  return cats.slice(0,max).map(cat => {
+    const c = catColor(cat);
+    return `<span class="cat-tag" style="background:${c.bg};border-color:${c.border};color:${c.text}">${esc(cat)}</span>`;
+  }).join("") + (cats.length > max ? `<span style="font-size:11px;color:#94a3b8;font-weight:600">+${cats.length-max}</span>` : "");
+}
+function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2500);
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render() {
+  const count = state.recipes.length;
+  document.getElementById("recipe-count").textContent = `${count} recipe${count !== 1 ? "s" : ""} in your kitchen`;
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.tab === state.tab);
+  });
+
+  const content = document.getElementById("content");
+  if (state.tab === "recipes") {
+    content.innerHTML = renderRecipes();
+  } else {
+    content.innerHTML = renderPlanner();
+  }
+  attachListeners();
+}
+
+// ── Recipes tab ───────────────────────────────────────────────────────────────
+function renderRecipes() {
+  const filtered = state.recipes
+    .filter(r => state.catFilter === "All" || recipeCats(r).includes(state.catFilter))
+    .filter(r => r.name.toLowerCase().includes(state.search.toLowerCase()))
+    .sort((a,b) => (daysSince(b.lastUsed) ?? 9999) - (daysSince(a.lastUsed) ?? 9999));
+
+  const catPills = ["All", ...state.categories].map(c =>
+    `<button class="cat-pill ${state.catFilter === c ? "active" : ""}" data-cat="${esc(c)}">${esc(c)}</button>`
+  ).join("");
+
+  const cards = filtered.length === 0
+    ? `<div class="empty-state"><div class="empty-icon">🍽️</div><div class="empty-title">No recipes yet</div><p style="font-size:13px">Add your first recipe to get started</p></div>`
+    : filtered.map(r => {
+        const cats = recipeCats(r);
+        const fresh = freshness(daysSince(r.lastUsed));
+        const total = (Number(r.prepTime)||0) + (Number(r.cookTime)||0);
+        return `<div class="recipe-card" data-id="${r.id}">
+          <div class="card-header">
+            <div style="flex:1;padding-right:8px">
+              <div class="card-title">${esc(r.name)}</div>
+              ${r.link ? `<div class="card-link-hint">${icon("link",11,"#c4a99a")} Has recipe link</div>` : ""}
+            </div>
+            <div class="card-actions">
+              <button class="icon-btn icon-btn-edit" data-edit="${r.id}" title="Edit">${icon("edit",14)}</button>
+              <button class="icon-btn icon-btn-del" data-del="${r.id}" title="Delete">${icon("trash",14)}</button>
+            </div>
+          </div>
+          <div class="card-meta">
+            ${catTagsHtml(cats, 3)}
+            ${total > 0 ? `<span class="meta-pill">⏱ ${total}min</span>` : ""}
+            ${r.serves ? `<span class="meta-pill">👥 ${r.serves}</span>` : ""}
+            <span class="freshness" style="color:${fresh.color}">● ${fresh.label}</span>
+          </div>
+        </div>`;
+      }).join("");
+
+  return `
+    <div class="search-row">
+      <input class="search-inp" id="search-inp" placeholder="Search recipes…" value="${esc(state.search)}">
+      <button class="btn-primary" id="add-recipe-btn">${icon("plus",16,"#fff")} Add Recipe</button>
+    </div>
+    <div class="cat-filters">
+      ${catPills}
+      <button class="manage-btn" id="manage-cats-btn">${icon("settings",13)} Manage</button>
+    </div>
+    ${cards}`;
+}
+
+// ── Planner tab ───────────────────────────────────────────────────────────────
+function renderPlanner() {
+  const hasAny = Object.values(state.plan).some(Boolean);
+  const rows = DAYS.map(day => {
+    const recipe = state.plan[day] ? state.recipes.find(r => r.id === state.plan[day]) : null;
+    const filled = recipe ? `
+      <div class="day-filled">
+        <div style="flex:1">
+          <div class="day-recipe-name">${esc(recipe.name)}</div>
+          <div class="day-recipe-cats">${catTagsHtml(recipeCats(recipe), 2)}</div>
+        </div>
+        <button class="day-done-btn" data-done="${recipe.id}" data-day="${day}">✓ Done</button>
+        <button class="day-remove-btn" data-remove="${day}">${icon("x",14)}</button>
+      </div>` :
+      `<button class="day-empty-btn" data-pick="${day}">+ Add dinner for ${day}</button>`;
+    return `<div class="day-row"><div class="day-label">${day.slice(0,3)}</div>${filled}</div>`;
+  }).join("");
+
+  return `
+    <div class="planner-header">
+      <div class="planner-title">Week Planner</div>
+      ${hasAny ? `<button class="btn-copy-all" id="copy-all-btn">${icon("copy",15,"#fff")} Copy All Lists</button>` : ""}
+    </div>
+    <div class="day-rows">${rows}</div>`;
+}
+
+// ── Attach event listeners ────────────────────────────────────────────────────
+function attachListeners() {
+  // Tabs
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.onclick = () => { state.tab = btn.dataset.tab; render(); };
+  });
+
+  // Export btn
+  document.getElementById("export-btn").onclick = () => openDataPortability();
+
+  if (state.tab === "recipes") {
+    document.getElementById("search-inp").oninput = e => { state.search = e.target.value; render(); };
+    document.getElementById("add-recipe-btn").onclick = () => openRecipeForm();
+    document.getElementById("manage-cats-btn").onclick = () => openCatManager();
+
+    document.querySelectorAll(".cat-pill").forEach(btn => {
+      btn.onclick = () => { state.catFilter = btn.dataset.cat; render(); };
+    });
+    document.querySelectorAll(".recipe-card").forEach(card => {
+      card.onclick = e => {
+        if (e.target.closest("[data-edit]") || e.target.closest("[data-del]")) return;
+        openRecipeDetail(card.dataset.id);
+      };
+    });
+    document.querySelectorAll("[data-edit]").forEach(btn => {
+      btn.onclick = e => { e.stopPropagation(); openRecipeForm(btn.dataset.edit); };
+    });
+    document.querySelectorAll("[data-del]").forEach(btn => {
+      btn.onclick = e => {
+        e.stopPropagation();
+        if (!confirm("Delete this recipe?")) return;
+        state.recipes = state.recipes.filter(r => r.id !== btn.dataset.del);
+        Object.keys(state.plan).forEach(d => { if (state.plan[d] === btn.dataset.del) delete state.plan[d]; });
+        saveRecipes(); savePlan(); toast("Recipe deleted."); render();
+      };
+    });
+  } else {
+    document.getElementById("copy-all-btn")?.addEventListener("click", () => {
+      const lines = DAYS.map(d => {
+        const r = state.plan[d] ? state.recipes.find(rec => rec.id === state.plan[d]) : null;
+        if (!r) return null;
+        return `📅 ${d}: ${r.name}\n${r.ingredients.filter(Boolean).map(i => `  • ${i}`).join("\n")}`;
+      }).filter(Boolean);
+      navigator.clipboard.writeText(lines.join("\n\n")).then(() => toast("All lists copied!"));
+    });
+    document.querySelectorAll("[data-pick]").forEach(btn => {
+      btn.onclick = () => openDayPicker(btn.dataset.pick);
+    });
+    document.querySelectorAll("[data-done]").forEach(btn => {
+      btn.onclick = () => {
+        state.recipes = state.recipes.map(r => r.id === btn.dataset.done ? { ...r, lastUsed: new Date().toISOString() } : r);
+        saveRecipes(); toast("Marked as cooked!"); render();
+      };
+    });
+    document.querySelectorAll("[data-remove]").forEach(btn => {
+      btn.onclick = () => { delete state.plan[btn.dataset.remove]; savePlan(); render(); };
+    });
+  }
+}
+
+// ── Modal system ──────────────────────────────────────────────────────────────
+function openModal(title, bodyHtml, maxWidth=560) {
+  const root = document.getElementById("modal-root");
+  root.innerHTML = `
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal-box" style="max-width:${maxWidth}px">
+        <div class="modal-header">
+          <div class="modal-title">${esc(title)}</div>
+          <button class="modal-close" id="modal-close-btn">${icon("x",20)}</button>
+        </div>
+        <div class="modal-body" id="modal-body">${bodyHtml}</div>
+      </div>
+    </div>`;
+  document.getElementById("modal-close-btn").onclick = closeModal;
+  document.getElementById("modal-overlay").onclick = e => { if (e.target.id === "modal-overlay") closeModal(); };
+}
+function closeModal() { document.getElementById("modal-root").innerHTML = ""; }
+
+// ── Recipe Form ───────────────────────────────────────────────────────────────
+function openRecipeForm(id) {
+  const existing = id ? state.recipes.find(r => r.id === id) : null;
+  const form = existing
+    ? { ...existing, categories: existing.categories?.length ? existing.categories : (existing.category ? [existing.category] : []) }
+    : { name:"", categories:[], serves:4, prepTime:"", cookTime:"", link:"", ingredients:[""], steps:"", notes:"" };
+
+  function render() {
+    const catPicker = state.categories.map(cat => {
+      const on = form.categories.includes(cat);
+      const c = catColor(cat);
+      const style = on
+        ? `border:2px solid ${c.border};background:${c.bg};color:${c.text};font-weight:700`
+        : `border:1.5px solid #e8ddd5;background:#fffaf6;color:#8b6f5e;font-weight:500`;
+      return `<button type="button" class="cat-pick-btn" data-cat="${esc(cat)}" style="${style}">${on ? "✓ " : ""}${esc(cat)}</button>`;
+    }).join("");
+
+    const ingRows = form.ingredients.map((ing, i) => `
+      <div class="ing-row">
+        <input class="inp ing-inp" data-idx="${i}" value="${esc(ing)}" placeholder="Ingredient ${i+1}">
+        ${form.ingredients.length > 1 ? `<button type="button" class="ing-del" data-del-idx="${i}">${icon("x",14)}</button>` : ""}
+      </div>`).join("");
+
+    const valid = form.name.trim() && form.categories.length > 0;
+    const body = `
+      <div class="field"><label class="field-label">Recipe Name</label>
+        <input class="inp" id="rf-name" value="${esc(form.name)}" placeholder="e.g. Spaghetti Carbonara"></div>
+      <div class="field"><label class="field-label">Categories <span class="field-req">*</span></label>
+        <div class="cat-picker" id="rf-cats">${catPicker}</div>
+        ${form.categories.length === 0 ? `<div class="cat-error">Select at least one category</div>` : ""}
+      </div>
+      <div class="field field-grid-2">
+        <div><label class="field-label">Prep (mins)</label><input class="inp" id="rf-prep" type="number" value="${esc(form.prepTime)}" placeholder="15"></div>
+        <div><label class="field-label">Cook (mins)</label><input class="inp" id="rf-cook" type="number" value="${esc(form.cookTime)}" placeholder="30"></div>
+      </div>
+      <div class="field"><label class="field-label">Serves</label><input class="inp" id="rf-serves" type="number" value="${esc(form.serves)}" style="width:90px"></div>
+      <div class="field"><label class="field-label">Recipe Link <span class="field-hint">(optional)</span></label>
+        <div class="inp-icon-wrap">${icon("link",15)}<input class="inp inp-padded" id="rf-link" value="${esc(form.link||"")}" placeholder="https://youtube.com/…"></div>
+      </div>
+      <div class="field">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <label class="field-label" style="margin:0">Ingredients</label>
+          <button type="button" class="btn-primary" id="add-ing-btn" style="padding:4px 10px;font-size:12px;border-radius:6px">+ Add</button>
+        </div>
+        <div id="ing-list">${ingRows}</div>
+      </div>
+      <div class="field"><label class="field-label">Method / Steps</label>
+        <textarea class="inp" id="rf-steps" rows="4" placeholder="Describe the cooking steps…">${esc(form.steps||"")}</textarea></div>
+      <div class="field"><label class="field-label">Notes (optional)</label>
+        <textarea class="inp" id="rf-notes" rows="2" placeholder="Variations, tips, wine pairings…">${esc(form.notes||"")}</textarea></div>
+      <div class="form-actions">
+        <button class="btn-secondary" id="rf-cancel">Cancel</button>
+        <button class="btn-save" id="rf-save" style="background:${valid ? "#f97316" : "#fbd5b5"}">${existing ? "Save Changes" : "Add Recipe"}</button>
+      </div>`;
+    document.getElementById("modal-body").innerHTML = body;
+    bindForm();
+  }
+
+  function bindForm() {
+    document.getElementById("rf-cancel").onclick = closeModal;
+    document.getElementById("rf-name").oninput = e => { form.name = e.target.value; revalidate(); };
+    document.getElementById("rf-prep").oninput = e => { form.prepTime = e.target.value; };
+    document.getElementById("rf-cook").oninput = e => { form.cookTime = e.target.value; };
+    document.getElementById("rf-serves").oninput = e => { form.serves = e.target.value; };
+    document.getElementById("rf-link").oninput = e => { form.link = e.target.value; };
+    document.getElementById("rf-steps").oninput = e => { form.steps = e.target.value; };
+    document.getElementById("rf-notes").oninput = e => { form.notes = e.target.value; };
+    document.querySelectorAll(".ing-inp").forEach(inp => {
+      inp.oninput = e => { form.ingredients[Number(inp.dataset.idx)] = e.target.value; };
+    });
+    document.querySelectorAll("[data-del-idx]").forEach(btn => {
+      btn.onclick = () => { form.ingredients.splice(Number(btn.dataset.delIdx), 1); render(); };
+    });
+    document.getElementById("add-ing-btn").onclick = () => { form.ingredients.push(""); render(); };
+    document.querySelectorAll(".cat-pick-btn").forEach(btn => {
+      btn.onclick = () => {
+        const cat = btn.dataset.cat;
+        if (form.categories.includes(cat)) form.categories = form.categories.filter(c => c !== cat);
+        else form.categories.push(cat);
+        render();
+      };
+    });
+    document.getElementById("rf-save").onclick = () => {
+      if (!form.name.trim() || !form.categories.length) return;
+      if (existing) {
+        state.recipes = state.recipes.map(r => r.id === existing.id ? { ...r, ...form } : r);
+        toast("Recipe updated!");
+      } else {
+        state.recipes.push({ ...form, id: Date.now().toString(), lastUsed: null });
+        toast("Recipe added!");
+      }
+      saveRecipes(); closeModal(); window.render();
+    };
+  }
+
+  function revalidate() {
+    const valid = form.name.trim() && form.categories.length > 0;
+    const btn = document.getElementById("rf-save");
+    if (btn) btn.style.background = valid ? "#f97316" : "#fbd5b5";
+  }
+
+  openModal(existing ? "Edit Recipe" : "Add New Recipe", "");
+  render();
+}
+
+// ── Recipe Detail ─────────────────────────────────────────────────────────────
+function openRecipeDetail(id) {
+  const r = state.recipes.find(rec => rec.id === id);
+  if (!r) return;
+  const cats = recipeCats(r);
+  const link = ensureUrl(r.link);
+  const total = (Number(r.prepTime)||0) + (Number(r.cookTime)||0);
+
+  const body = `
+    <div class="detail-meta">
+      ${catTagsHtml(cats)}
+      ${r.prepTime ? `<span class="meta-badge">Prep: ${r.prepTime}min</span>` : ""}
+      ${r.cookTime ? `<span class="meta-badge">Cook: ${r.cookTime}min</span>` : ""}
+      ${r.serves   ? `<span class="meta-badge">Serves ${r.serves}</span>` : ""}
+    </div>
+    ${link ? `<a class="recipe-link-btn" href="${esc(link)}" target="_blank" rel="noopener noreferrer">
+      ${icon("link",15,"#0369a1")}
+      <span class="recipe-link-text">${esc(r.link)}</span>
+      <span class="recipe-link-arrow">Open ↗</span></a>` : ""}
+    ${r.ingredients?.filter(Boolean).length ? `
+      <div style="margin-bottom:18px">
+        <div class="section-label">Ingredients</div>
+        <ul class="ingredients-list">${r.ingredients.filter(Boolean).map(i => `<li>${esc(i)}</li>`).join("")}</ul>
+      </div>` : ""}
+    ${r.steps ? `<div style="margin-bottom:18px"><div class="section-label">Method</div><div class="steps-text">${esc(r.steps)}</div></div>` : ""}
+    ${r.notes ? `<div class="notes-box"><div class="notes-label">Notes</div><div class="notes-text">${esc(r.notes)}</div></div>` : ""}
+    <div class="detail-actions">
+      <button class="btn-detail btn-shopping" id="shopping-btn">${icon("cart",16,"#fff")} Shopping List</button>
+      <button class="btn-detail btn-plan" id="add-plan-btn">${icon("cal",16,"#f97316")} Add to Plan</button>
+      <button class="btn-detail btn-cooked" id="mark-cooked-btn">${icon("check",16,"#16a34a")} Mark Cooked</button>
+    </div>`;
+
+  openModal(r.name, body);
+  document.getElementById("shopping-btn").onclick = () => { closeModal(); openShoppingChecklist(r); };
+  document.getElementById("add-plan-btn").onclick  = () => { closeModal(); openDayPicker(null, r.id); };
+  document.getElementById("mark-cooked-btn").onclick = () => {
+    state.recipes = state.recipes.map(rec => rec.id === id ? { ...rec, lastUsed: new Date().toISOString() } : rec);
+    saveRecipes(); closeModal(); toast("Marked as cooked!"); window.render();
+  };
+}
+
+// ── Shopping Checklist ────────────────────────────────────────────────────────
+function openShoppingChecklist(recipe) {
+  const ings = recipe.ingredients.filter(Boolean);
+  const checked = new Set();
+
+  function render() {
+    const needed = ings.filter(i => !checked.has(i));
+    const allChecked = ings.every(i => checked.has(i));
+
+    const items = ings.map(ing => `
+      <div class="check-item ${checked.has(ing) ? "checked" : ""}" data-ing="${esc(ing)}">
+        <div class="check-box ${checked.has(ing) ? "checked" : ""}">${checked.has(ing) ? icon("check",12,"#fff") : ""}</div>
+        <span class="check-label ${checked.has(ing) ? "checked" : ""}">${esc(ing)}</span>
+        ${checked.has(ing) ? `<span class="pantry-badge">in pantry</span>` : ""}
+      </div>`).join("");
+
+    const body = `
+      <p class="checklist-hint">Tick anything already in your pantry — only <strong>unticked items</strong> will be copied to Keep.</p>
+      <button class="toggle-all-btn" id="toggle-all">${allChecked ? "✕ Unselect all" : "✓ Already have everything"}</button>
+      <div class="checklist-items">${items}</div>
+      <div class="checklist-summary ${needed.length ? "needs" : "done"}">
+        ${needed.length ? `${needed.length} item${needed.length !== 1 ? "s" : ""} to buy · ${ings.length - needed.length} already in pantry` : "✓ You have everything — nothing to buy!"}
+      </div>
+      <div class="checklist-actions">
+        <button class="btn-secondary" id="check-back">Back</button>
+        <button class="btn-copy ${needed.length ? "active" : "disabled"}" id="copy-list-btn" ${!needed.length ? "disabled" : ""}>
+          ${icon("copy",16, needed.length ? "#fff" : "#94a3b8")} Copy ${needed.length} item${needed.length !== 1 ? "s" : ""} to Keep
+        </button>
+      </div>`;
+
+    document.getElementById("modal-body").innerHTML = body;
+    bindChecklist(needed);
+  }
+
+  function bindChecklist(needed) {
+    document.getElementById("check-back").onclick = () => { closeModal(); openRecipeDetail(recipe.id); };
+    document.getElementById("toggle-all").onclick = () => {
+      if (ings.every(i => checked.has(i))) checked.clear(); else ings.forEach(i => checked.add(i));
+      render();
+    };
+    document.querySelectorAll(".check-item").forEach(item => {
+      item.onclick = () => {
+        const ing = item.dataset.ing;
+        if (checked.has(ing)) checked.delete(ing); else checked.add(ing);
+        render();
+      };
+    });
+    const copyBtn = document.getElementById("copy-list-btn");
+    if (copyBtn && needed.length) {
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(`🛒 ${recipe.name}\n\n${needed.map(i => `• ${i}`).join("\n")}`).then(() => {
+          copyBtn.classList.replace("active","copied");
+          copyBtn.innerHTML = `${icon("check",16,"#fff")} Copied!`;
+          setTimeout(() => { copyBtn.classList.replace("copied","active"); render(); }, 2500);
+        });
+      };
+    }
+  }
+
+  openModal("Shopping List", "");
+  render();
+}
+
+// ── Day Picker ────────────────────────────────────────────────────────────────
+function openDayPicker(preDay, preRecipeId) {
+  // If no recipe pre-selected, show recipe picker first
+  if (!preRecipeId) {
+    openRecipePicker(preDay);
+    return;
+  }
+  const recipe = state.recipes.find(r => r.id === preRecipeId);
+
+  const buttons = DAYS.map(d => {
+    const occ = state.plan[d];
+    const occName = occ ? state.recipes.find(r => r.id === occ)?.name : null;
+    return `<button class="day-pick-btn ${occ ? "occupied" : ""}" data-day="${d}">
+      ${d}
+      ${occName ? `<span class="day-replaces">Replaces: ${esc(occName)}</span>` : ""}
+    </button>`;
+  }).join("");
+
+  openModal(`Add "${recipe.name}" to which day?`, `<div class="day-pick-list">${buttons}</div>`, 460);
+  document.querySelectorAll(".day-pick-btn").forEach(btn => {
+    btn.onclick = () => {
+      state.plan[btn.dataset.day] = preRecipeId;
+      savePlan(); closeModal(); toast(`Added to ${btn.dataset.day}!`); window.render();
+    };
+  });
+}
+
+// ── Recipe Picker (for planner) ───────────────────────────────────────────────
+function openRecipePicker(day) {
+  function render(search="") {
+    const list = state.recipes
+      .filter(r => r.name.toLowerCase().includes(search.toLowerCase()))
+      .map(r => {
+        const fresh = freshness(daysSince(r.lastUsed));
+        return `<button class="recipe-pick-btn" data-id="${r.id}">
+          <div><div class="pick-name">${esc(r.name)}</div><div style="display:flex;gap:6px;flex-wrap:wrap">${catTagsHtml(recipeCats(r),2)}</div></div>
+          <span style="font-size:12px;color:${fresh.color};font-weight:600;flex-shrink:0">● ${fresh.label}</span>
+        </button>`;
+      }).join("") || `<p style="color:#94a3b8;text-align:center;padding:20px">No recipes found.</p>`;
+
+    document.getElementById("modal-body").innerHTML = `
+      <input class="search-inp" id="picker-search" placeholder="Search recipes…" value="${esc(search)}" style="margin-bottom:14px">
+      <div class="recipe-pick-list">${list}</div>`;
+
+    document.getElementById("picker-search").oninput = e => render(e.target.value);
+    document.getElementById("picker-search").focus();
+    document.querySelectorAll(".recipe-pick-btn").forEach(btn => {
+      btn.onclick = () => {
+        state.plan[day] = btn.dataset.id;
+        savePlan(); closeModal(); toast(`Added to ${day}!`); window.render();
+      };
+    });
+  }
+
+  openModal(`Choose dinner for ${day}`, "");
+  render();
+}
+
+// ── Category Manager ──────────────────────────────────────────────────────────
+function openCatManager() {
+  let cats = [...state.categories];
+  let editIdx = null;
+
+  function render() {
+    const items = cats.map((cat, i) => {
+      const c = catColor(cat);
+      if (editIdx === i) {
+        return `<div class="cat-list-item">
+          <input class="inp cat-edit-inp" data-idx="${i}" value="${esc(cat)}" style="flex:1">
+          <button class="btn-primary cat-edit-save" data-idx="${i}" style="padding:6px 12px;font-size:12px;border-radius:7px">Save</button>
+          <button class="btn-secondary" id="cat-edit-cancel" style="padding:6px 10px;font-size:12px">✕</button>
+        </div>`;
+      }
+      return `<div class="cat-list-item">
+        <div class="cat-dot" style="background:${c.border}"></div>
+        <span class="cat-name">${esc(cat)}</span>
+        <button class="icon-btn icon-btn-edit" data-edit-cat="${i}" title="Rename">${icon("edit",13)}</button>
+        <button class="icon-btn icon-btn-del" data-del-cat="${i}" title="Remove">${icon("trash",13)}</button>
+      </div>`;
+    }).join("");
+
+    document.getElementById("modal-body").innerHTML = `
+      <p style="font-size:13px;color:#8b6f5e;margin-bottom:16px">Add, rename, or remove categories.</p>
+      <div class="cat-list" id="cat-list">${items}</div>
+      <div class="add-cat-row">
+        <input class="inp" id="new-cat-inp" placeholder="New category name…" style="flex:1">
+        <button class="btn-add-cat" id="add-cat-btn">+ Add</button>
+      </div>
+      <div class="form-actions">
+        <button class="btn-secondary" id="cat-cancel">Cancel</button>
+        <button class="btn-save" id="cat-save" style="background:#f97316">Save</button>
+      </div>`;
+    bind();
+  }
+
+  function bind() {
+    document.getElementById("cat-cancel").onclick = closeModal;
+    document.getElementById("cat-save").onclick = () => {
+      state.categories = cats;
+      saveCats();
+      if (!cats.includes(state.catFilter)) state.catFilter = "All";
+      toast("Categories updated!"); closeModal(); window.render();
+    };
+    document.getElementById("add-cat-btn").onclick = () => {
+      const v = document.getElementById("new-cat-inp").value.trim();
+      if (!v || cats.includes(v)) return;
+      cats.push(v); editIdx = null; render();
+    };
+    document.getElementById("new-cat-inp").onkeydown = e => {
+      if (e.key === "Enter") document.getElementById("add-cat-btn").click();
+    };
+    document.querySelectorAll("[data-edit-cat]").forEach(btn => {
+      btn.onclick = () => { editIdx = Number(btn.dataset.editCat); render(); };
+    });
+    document.querySelectorAll("[data-del-cat]").forEach(btn => {
+      btn.onclick = () => { cats.splice(Number(btn.dataset.delCat), 1); editIdx = null; render(); };
+    });
+    document.querySelectorAll(".cat-edit-save").forEach(btn => {
+      btn.onclick = () => {
+        const inp = document.querySelector(`.cat-edit-inp[data-idx="${btn.dataset.idx}"]`);
+        const v = inp?.value.trim();
+        if (!v || (cats.includes(v) && cats[Number(btn.dataset.idx)] !== v)) { editIdx = null; render(); return; }
+        cats[Number(btn.dataset.idx)] = v; editIdx = null; render();
+      };
+    });
+    document.getElementById("cat-edit-cancel")?.addEventListener("click", () => { editIdx = null; render(); });
+    document.querySelectorAll(".cat-edit-inp").forEach(inp => {
+      inp.onkeydown = e => {
+        if (e.key === "Enter") document.querySelector(`.cat-edit-save[data-idx="${inp.dataset.idx}"]`)?.click();
+        if (e.key === "Escape") { editIdx = null; render(); }
+      };
+    });
+  }
+
+  openModal("Manage Categories", "", 460);
+  render();
+}
+
+// ── Export / Import ───────────────────────────────────────────────────────────
+function openDataPortability() {
+  let showImport = false;
+  let importText = "";
+  let importPreview = null;
+  let importError = "";
+  let confirmed = false;
+
+  function render() {
+    const exportSection = `
+      <div class="export-box">
+        <div class="export-title">Export your data</div>
+        <p class="export-hint">Downloads a .json backup of all your recipes and categories. Keep it safe — you can import it here at any time.</p>
+        <button class="btn-green" id="do-export-btn">${icon("download",16,"#fff")} Download backup (${state.recipes.length} recipes)</button>
+      </div>`;
+
+    const importSection = !showImport ? `
+      <div class="import-box">
+        <div class="import-title">Import data</div>
+        <p class="import-hint">Load a previously exported file. Recipes are <strong>merged</strong> — existing ones kept, new ones added.</p>
+        <button class="btn-import" id="show-import-btn">${icon("upload",16,"#fff")} Import from file</button>
+      </div>` : `
+      <div class="import-box">
+        <div class="import-title">Import data</div>
+        <p class="import-hint">Load a previously exported file. Recipes are <strong>merged</strong> — existing ones kept, new ones added.</p>
+        <label class="file-drop">
+          <input type="file" accept=".json" id="import-file" style="display:none">
+          ${icon("upload",18,"#f97316")}
+          <span class="file-drop-label">Click to choose a .json file</span>
+        </label>
+        <div class="import-or">— or paste JSON directly —</div>
+        <textarea class="inp" id="import-paste" rows="4" placeholder='{"version":1,"recipes":[...]}'
+          style="font-family:monospace;font-size:12px;resize:vertical">${esc(importText)}</textarea>
+        ${importError ? `<div class="import-error">⚠️ ${esc(importError)}</div>` : ""}
+        ${importPreview ? `
+          <div class="import-preview">
+            <div class="import-preview-text">✓ Found ${importPreview.recipeCount} recipe${importPreview.recipeCount !== 1 ? "s" : ""} ready to import</div>
+            <label class="confirm-row"><input type="checkbox" id="import-confirm" ${confirmed ? "checked" : ""}>
+              <span class="confirm-label">I understand this will merge imported recipes with my existing ones</span></label>
+          </div>` : ""}
+        <div class="import-actions">
+          <button class="btn-secondary" id="cancel-import-btn">Cancel</button>
+          <button class="btn-confirm ${importPreview && confirmed ? "ready" : "disabled"}" id="do-import-btn" ${!(importPreview && confirmed) ? "disabled" : ""}>
+            ${icon("upload",15, importPreview && confirmed ? "#fff" : "#94a3b8")} Confirm Import
+          </button>
+        </div>
+      </div>`;
+
+    document.getElementById("modal-body").innerHTML = exportSection + importSection;
+    bind();
+  }
+
+  function parseImport(text) {
+    importError = ""; importPreview = null; confirmed = false;
+    if (!text.trim()) return;
+    try {
+      const data = JSON.parse(text);
+      if (!Array.isArray(data.recipes)) throw new Error("No recipes array found.");
+      importPreview = { recipeCount: data.recipes.length, categories: data.categories || [], recipes: data.recipes };
+    } catch(e) { importError = e.message || "Could not parse file."; }
+  }
+
+  function bind() {
+    document.getElementById("do-export-btn").onclick = () => {
+      const data = { version:1, exportedAt: new Date().toISOString(), categories: state.categories, recipes: state.recipes };
+      const json = JSON.stringify(data, null, 2);
+      const uri = "data:application/json;charset=utf-8," + encodeURIComponent(json);
+      const a = document.createElement("a");
+      a.href = uri;
+      a.download = `dinner-planner-${new Date().toISOString().slice(0,10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      toast("Backup downloaded!");
+    };
+
+    document.getElementById("show-import-btn")?.addEventListener("click", () => { showImport = true; render(); });
+    document.getElementById("cancel-import-btn")?.addEventListener("click", () => { showImport = false; importText = ""; importPreview = null; importError = ""; confirmed = false; render(); });
+
+    document.getElementById("import-file")?.addEventListener("change", e => {
+      const f = e.target.files[0]; if (!f) return;
+      const reader = new FileReader();
+      reader.onload = ev => { importText = ev.target.result; parseImport(importText); render(); };
+      reader.readAsText(f);
+    });
+
+    document.getElementById("import-paste")?.addEventListener("input", e => {
+      importText = e.target.value; parseImport(importText); render();
+    });
+
+    document.getElementById("import-confirm")?.addEventListener("change", e => {
+      confirmed = e.target.checked; render();
+    });
+
+    document.getElementById("do-import-btn")?.addEventListener("click", () => {
+      if (!importPreview || !confirmed) return;
+      const existingIds = new Set(state.recipes.map(r => r.id));
+      const newR = importPreview.recipes.filter(r => !existingIds.has(r.id));
+      state.recipes = [...state.recipes, ...newR];
+      saveRecipes();
+      const mc = [...state.categories];
+      (importPreview.categories || []).forEach(c => { if (!mc.includes(c)) mc.push(c); });
+      state.categories = mc; saveCats();
+      toast(`Imported ${newR.length} recipe${newR.length !== 1 ? "s" : ""}!`);
+      closeModal(); window.render();
+    });
+  }
+
+  openModal("Export / Import Data", "", 500);
+  render();
+}
+
+// ── PWA install prompt ────────────────────────────────────────────────────────
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById("install-banner").style.display = "flex";
+});
+document.getElementById("install-btn").onclick = async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById("install-banner").style.display = "none";
+};
+document.getElementById("install-dismiss").onclick = () => {
+  document.getElementById("install-banner").style.display = "none";
+};
+
+// ── Expose render globally so handlers can call it ────────────────────────────
+window.render = render;
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
