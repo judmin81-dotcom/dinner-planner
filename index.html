@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dinner Planner">
 <title>Dinner Planner</title>
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -41,6 +42,59 @@
   html, body { height: 100%; }
   body { font-family: var(--font-sans); background: var(--cream-bg); color: var(--brown-dark); -webkit-tap-highlight-color: transparent; }
 
+  /* ── Dark mode ── */
+  body.dark {
+    --brown-dark:  #f5ede8;
+    --brown-mid:   #c4a99a;
+    --brown-light: #8b6f5e;
+    --cream:       #1e1410;
+    --cream-bg:    #150e0a;
+    --border:      #2e1f17;
+    --border-inp:  #3a2820;
+    --orange-light:#2a1a0a;
+    --orange-pale: #4a2505;
+    --green-bg:    #0a1f10;
+    --green-border:#1a4a28;
+    --red-bg:      #2a0a0a;
+    --slate:       #64748b;
+  }
+  body.dark #header { background: #0d0805; }
+  body.dark .modal-box { background: #1e1410; border-color: #2e1f17; }
+  body.dark .modal-header { background: #1e1410; border-color: #2e1f17; }
+  body.dark .inp { background: #150e0a; border-color: #3a2820; color: var(--brown-dark); }
+  body.dark .inp:focus { border-color: var(--orange); }
+  body.dark .recipe-card { background: #1e1410; border-color: #2e1f17; }
+  body.dark .day-row { background: #1e1410; border-color: #2e1f17; }
+  body.dark .week-start-row { background: #1e1410; border-color: #2e1f17; }
+  body.dark .cat-list-item { background: #1e1410; border-color: #2e1f17; }
+  body.dark .notes-box { background: #1a1305; border-color: #3d3010; }
+  body.dark .export-box { background: #0a1a0f; border-color: #1a4a28; }
+  body.dark .import-box { background: #1a0f05; border-color: #4a2e10; }
+  body.dark .import-preview { background: #0a1a0f; border-color: #1a4a28; }
+  body.dark .import-error { background: #2a0a0a; border-color: #5a1a1a; }
+  body.dark .btn-secondary { background: #1e1410; border-color: #3a2820; color: var(--brown-mid); }
+  body.dark .btn-secondary:hover { background: #2e1f17; }
+  body.dark .cat-pill { background: #1e1410; border-color: #3a2820; }
+  body.dark .cat-pill.active { background: #2a1a0a; }
+  body.dark .manage-btn { background: #2a1a0a; border-color: #3a2820; }
+  body.dark .recipe-pick-btn { background: #1e1410; border-color: #2e1f17; }
+  body.dark .recipe-pick-btn:hover { background: #2a1a0a; }
+  body.dark .day-pick-btn { background: #1e1410; border-color: #2e1f17; }
+  body.dark .day-pick-btn:hover { background: #2a1a0a; }
+  body.dark .day-pick-btn.occupied { background: #2a0a0a; }
+  body.dark .check-item { background: #1e1410; border-color: #2e1f17; }
+  body.dark .check-item.checked { background: #150e0a; border-color: #2e1f17; }
+  body.dark .check-box { background: #150e0a; }
+  body.dark .toggle-all-btn { border-color: #3a2820; }
+  body.dark .toggle-all-btn:hover { background: #2e1f17; }
+  body.dark .checklist-summary.needs { background: #1a0f05; border-color: #4a2e10; }
+  body.dark .recipe-link-btn { background: #0a1520; border-color: #1a3a5a; }
+  body.dark .recipe-link-btn:hover { background: #0f1f2e; }
+  body.dark .day-start-pill { background: #150e0a; border-color: #3a2820; }
+  body.dark .day-start-pill.active { background: #2a1a0a; }
+  body.dark #install-banner { background: #0d0805; }
+
+  /* ── Scrollbar ── */
   /* ── Scrollbar ── */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -77,6 +131,39 @@
 
   /* ── Content ── */
   #content { padding: 20px 16px; max-width: 700px; margin: 0 auto; }
+
+  /* ── Recipes toolbar ── */
+  .recipes-toolbar {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .toolbar-group { display: flex; gap: 4px; background: var(--cream-bg); border: 1.5px solid var(--border-inp); border-radius: 10px; padding: 3px; }
+  .toolbar-btn {
+    padding: 6px 12px; border-radius: 7px; border: none; background: transparent;
+    font-size: 12px; font-weight: 600; font-family: var(--font-sans); cursor: pointer;
+    color: var(--brown-mid); transition: all 0.12s; display: flex; align-items: center; gap: 5px;
+  }
+  .toolbar-btn.active { background: var(--orange); color: #fff; }
+  .toolbar-btn:not(.active):hover { background: var(--border); }
+
+  /* ── Compact view ── */
+  .compact-list { display: flex; flex-direction: column; gap: 0; border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .compact-row {
+    display: flex; align-items: center; gap: 10px; padding: 11px 16px;
+    border-bottom: 1px solid var(--border); background: var(--cream); cursor: pointer;
+    transition: background 0.12s;
+  }
+  .compact-row:last-child { border-bottom: none; }
+  .compact-row:hover { background: var(--orange-light); }
+  .compact-name { font-size: 14px; font-weight: 600; color: var(--brown-dark); flex: 1; font-family: var(--font-serif); }
+  .compact-cats { display: flex; gap: 5px; flex-shrink: 0; }
+  .compact-fresh { font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .compact-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+  body.dark .toolbar-group { background: #150e0a; border-color: #3a2820; }
+  body.dark .toolbar-btn:not(.active):hover { background: #2e1f17; }
+  body.dark .compact-list { border-color: #2e1f17; }
+  body.dark .compact-row { background: #1e1410; border-color: #2e1f17; }
+  body.dark .compact-row:hover { background: #2a1a0a; }
 
   /* ── Search + Add row ── */
   .search-row { display: flex; gap: 10px; margin-bottom: 14px; }
@@ -299,11 +386,17 @@
   .day-recipe-name { font-weight: 600; font-size: 15px; color: var(--brown-dark); font-family: var(--font-serif); }
   .day-recipe-cats { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
   .day-done-btn {
-    background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 7px;
-    padding: 5px 9px; cursor: pointer; color: #16a34a; font-size: 12px; font-weight: 600;
-    font-family: var(--font-sans); flex-shrink: 0; transition: background 0.15s;
+    border: 1px solid var(--green-border); border-radius: 7px;
+    padding: 5px 9px; cursor: pointer; font-size: 12px; font-weight: 600;
+    font-family: var(--font-sans); flex-shrink: 0; transition: all 0.15s;
+    background: var(--green-bg); color: #16a34a;
   }
   .day-done-btn:hover { background: #dcfce7; }
+  .day-done-btn.cooked {
+    background: #16a34a; color: #fff; border-color: #15803d;
+  }
+  .day-done-btn.cooked:hover { background: #15803d; }
+  .day-row.cooked-row { opacity: 0.6; }
   .day-remove-btn {
     background: var(--red-bg); border: none; border-radius: 7px; padding: 5px 9px;
     cursor: pointer; color: var(--red); display: flex; flex-shrink: 0; transition: background 0.15s;
@@ -399,6 +492,22 @@
   }
   #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
+  /* ── Week start picker ── */
+  .week-start-row {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: var(--cream); border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 10px 16px; margin-bottom: 14px;
+  }
+  .week-start-label { font-size: 12px; font-weight: 700; color: var(--brown-mid); text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0; }
+  .week-start-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .day-start-pill {
+    padding: 5px 11px; border-radius: 20px; border: 1.5px solid var(--border-inp);
+    background: var(--cream-bg); color: var(--brown-mid); font-size: 12px; font-weight: 600;
+    font-family: var(--font-sans); cursor: pointer; transition: all 0.12s;
+  }
+  .day-start-pill.active { border: 2px solid var(--orange); background: var(--orange-light); color: var(--orange); }
+  .day-start-pill:hover:not(.active) { border-color: var(--brown-light); }
+
   /* ── PWA install banner ── */
   #install-banner {
     background: var(--brown-dark); color: var(--cream); padding: 10px 16px;
@@ -435,18 +544,21 @@
       <div id="app-title">Dinner Planner</div>
       <div id="recipe-count">Loading…</div>
     </div>
+    <button id="dark-mode-btn" title="Toggle dark mode" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:9px;padding:7px 10px;cursor:pointer;display:flex;align-items:center;margin-left:0;">
+      <span id="dark-mode-icon">🌙</span>
+    </button>
     <button id="export-btn" title="Export / Import data">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c4a99a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
     </button>
   </div>
   <div id="tabs">
-    <button class="tab-btn active" data-tab="recipes">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/></svg>
-      Recipes
-    </button>
-    <button class="tab-btn" data-tab="planner">
+    <button class="tab-btn active" data-tab="planner">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>
       Week Planner
+    </button>
+    <button class="tab-btn" data-tab="recipes">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/></svg>
+      Recipes
     </button>
   </div>
 </div>
@@ -459,7 +571,7 @@
 // ── Constants ────────────────────────────────────────────────────────────────
 const DEFAULT_CATS = ["BBQ & Grill","Italian","Asian","Quick & Easy","Pasta"];
 const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-const SK = { recipes:"dp_recipes", plan:"dp_plan", cats:"dp_categories" };
+const SK = { recipes:"dp_recipes", plan:"dp_plan", cats:"dp_categories", weekStart:"dp_weekStart" };
 
 const BASE_COLORS = {
   "BBQ & Grill":  { bg:"#fff0e6", border:"#f97316", text:"#c2410c" },
@@ -506,15 +618,21 @@ let state = {
   recipes: [],
   plan: {},
   categories: [...DEFAULT_CATS],
-  tab: "recipes",
+  tab: "planner",
   catFilter: "All",
   search: "",
+  weekStart: 0,
+  sortMode: "recent",
+  viewMode: "card",
 };
 
 function init() {
   const r = load(SK.recipes); if (r) state.recipes = r;
   const p = load(SK.plan);    if (p) state.plan = p;
   const c = load(SK.cats);    if (c) state.categories = c;
+  const w = load("dp_weekStart"); if (w !== null) state.weekStart = w;
+  const sv = load("dp_sortMode"); if (sv) state.sortMode = sv;
+  const vv = load("dp_viewMode"); if (vv) state.viewMode = vv;
   render();
 }
 
@@ -580,40 +698,63 @@ function render() {
 
 // ── Recipes tab ───────────────────────────────────────────────────────────────
 function renderRecipes() {
-  const filtered = state.recipes
+  const base = state.recipes
     .filter(r => state.catFilter === "All" || recipeCats(r).includes(state.catFilter))
-    .filter(r => r.name.toLowerCase().includes(state.search.toLowerCase()))
-    .sort((a,b) => (daysSince(b.lastUsed) ?? 9999) - (daysSince(a.lastUsed) ?? 9999));
+    .filter(r => r.name.toLowerCase().includes(state.search.toLowerCase()));
+
+  const sorted = state.sortMode === "alpha"
+    ? [...base].sort((a,b) => a.name.localeCompare(b.name))
+    : [...base].sort((a,b) => (daysSince(b.lastUsed) ?? 9999) - (daysSince(a.lastUsed) ?? 9999));
 
   const catPills = ["All", ...state.categories].map(c =>
     `<button class="cat-pill ${state.catFilter === c ? "active" : ""}" data-cat="${esc(c)}">${esc(c)}</button>`
   ).join("");
 
-  const cards = filtered.length === 0
-    ? `<div class="empty-state"><div class="empty-icon">🍽️</div><div class="empty-title">No recipes yet</div><p style="font-size:13px">Add your first recipe to get started</p></div>`
-    : filtered.map(r => {
-        const cats = recipeCats(r);
-        const fresh = freshness(daysSince(r.lastUsed));
-        const total = (Number(r.prepTime)||0) + (Number(r.cookTime)||0);
-        return `<div class="recipe-card" data-id="${r.id}">
-          <div class="card-header">
-            <div style="flex:1;padding-right:8px">
-              <div class="card-title">${esc(r.name)}</div>
-              ${r.link ? `<div class="card-link-hint">${icon("link",11,"#c4a99a")} Has recipe link</div>` : ""}
-            </div>
-            <div class="card-actions">
-              <button class="icon-btn icon-btn-edit" data-edit="${r.id}" title="Edit">${icon("edit",14)}</button>
-              <button class="icon-btn icon-btn-del" data-del="${r.id}" title="Delete">${icon("trash",14)}</button>
-            </div>
+  const emptyHtml = `<div class="empty-state"><div class="empty-icon">🍽️</div><div class="empty-title">No recipes yet</div><p style="font-size:13px">Add your first recipe to get started</p></div>`;
+
+  let listHtml = "";
+  if (sorted.length === 0) {
+    listHtml = emptyHtml;
+  } else if (state.viewMode === "card") {
+    listHtml = sorted.map(r => {
+      const cats = recipeCats(r);
+      const fresh = freshness(daysSince(r.lastUsed));
+      const total = (Number(r.prepTime)||0) + (Number(r.cookTime)||0);
+      return `<div class="recipe-card" data-id="${r.id}">
+        <div class="card-header">
+          <div style="flex:1;padding-right:8px">
+            <div class="card-title">${esc(r.name)}</div>
+            ${r.link ? `<div class="card-link-hint">${icon("link",11,"#c4a99a")} Has recipe link</div>` : ""}
           </div>
-          <div class="card-meta">
-            ${catTagsHtml(cats, 3)}
-            ${total > 0 ? `<span class="meta-pill">⏱ ${total}min</span>` : ""}
-            ${r.serves ? `<span class="meta-pill">👥 ${r.serves}</span>` : ""}
-            <span class="freshness" style="color:${fresh.color}">● ${fresh.label}</span>
+          <div class="card-actions">
+            <button class="icon-btn icon-btn-edit" data-edit="${r.id}" title="Edit">${icon("edit",14)}</button>
+            <button class="icon-btn icon-btn-del" data-del="${r.id}" title="Delete">${icon("trash",14)}</button>
           </div>
-        </div>`;
-      }).join("");
+        </div>
+        <div class="card-meta">
+          ${catTagsHtml(cats, 3)}
+          ${total > 0 ? `<span class="meta-pill">⏱ ${total}min</span>` : ""}
+          ${r.serves ? `<span class="meta-pill">👥 ${r.serves}</span>` : ""}
+          <span class="freshness" style="color:${fresh.color}">● ${fresh.label}</span>
+        </div>
+      </div>`;
+    }).join("");
+  } else {
+    // Compact view
+    const rows = sorted.map(r => {
+      const fresh = freshness(daysSince(r.lastUsed));
+      return `<div class="compact-row" data-id="${r.id}">
+        <div class="compact-name">${esc(r.name)}</div>
+        <div class="compact-cats">${catTagsHtml(recipeCats(r), 1)}</div>
+        <span class="compact-fresh" style="color:${fresh.color}">● ${fresh.label}</span>
+        <div class="compact-actions">
+          <button class="icon-btn icon-btn-edit" data-edit="${r.id}" title="Edit">${icon("edit",13)}</button>
+          <button class="icon-btn icon-btn-del" data-del="${r.id}" title="Delete">${icon("trash",13)}</button>
+        </div>
+      </div>`;
+    }).join("");
+    listHtml = `<div class="compact-list">${rows}</div>`;
+  }
 
   return `
     <div class="search-row">
@@ -624,13 +765,30 @@ function renderRecipes() {
       ${catPills}
       <button class="manage-btn" id="manage-cats-btn">${icon("settings",13)} Manage</button>
     </div>
-    ${cards}`;
+    <div class="recipes-toolbar">
+      <div class="toolbar-group">
+        <button class="toolbar-btn ${state.sortMode==="recent"?"active":""}" data-sort="recent">● Recent</button>
+        <button class="toolbar-btn ${state.sortMode==="alpha"?"active":""}" data-sort="alpha">A→Z</button>
+      </div>
+      <div class="toolbar-group" style="margin-left:auto">
+        <button class="toolbar-btn ${state.viewMode==="card"?"active":""}" data-view="card">${icon("book",13, state.viewMode==="card"?"#fff":"currentColor")} Card</button>
+        <button class="toolbar-btn ${state.viewMode==="compact"?"active":""}" data-view="compact">${icon("cal",13, state.viewMode==="compact"?"#fff":"currentColor")} Compact</button>
+      </div>
+    </div>
+    ${listHtml}`;
 }
 
 // ── Planner tab ───────────────────────────────────────────────────────────────
 function renderPlanner() {
-  const hasAny = Object.values(state.plan).some(Boolean);
-  const rows = DAYS.map(day => {
+  // Reorder days from chosen start
+  const orderedDays = [...DAYS.slice(state.weekStart), ...DAYS.slice(0, state.weekStart)];
+  const hasAny = orderedDays.some(day => state.plan[day]);
+
+  const dayPills = DAYS.map((day, idx) => `
+    <button class="day-start-pill ${state.weekStart === idx ? 'active' : ''}" data-start="${idx}">${day.slice(0,3)}</button>
+  `).join("");
+
+  const rows = orderedDays.map(day => {
     const recipe = state.plan[day] ? state.recipes.find(r => r.id === state.plan[day]) : null;
     const filled = recipe ? `
       <div class="day-filled">
@@ -638,17 +796,21 @@ function renderPlanner() {
           <div class="day-recipe-name">${esc(recipe.name)}</div>
           <div class="day-recipe-cats">${catTagsHtml(recipeCats(recipe), 2)}</div>
         </div>
-        <button class="day-done-btn" data-done="${recipe.id}" data-day="${day}">✓ Done</button>
+        <button class="day-done-btn ${state.plan[day + '_cooked'] ? 'cooked' : ''}" data-done="${recipe.id}" data-day="${day}">${state.plan[day + '_cooked'] ? '✓ Cooked' : 'Mark Done'}</button>
         <button class="day-remove-btn" data-remove="${day}">${icon("x",14)}</button>
       </div>` :
       `<button class="day-empty-btn" data-pick="${day}">+ Add dinner for ${day}</button>`;
-    return `<div class="day-row"><div class="day-label">${day.slice(0,3)}</div>${filled}</div>`;
+    return `<div class="day-row ${state.plan[day + '_cooked'] ? 'cooked-row' : ''}"><div class="day-label">${day.slice(0,3)}</div>${filled}</div>`;
   }).join("");
 
   return `
     <div class="planner-header">
       <div class="planner-title">Week Planner</div>
       ${hasAny ? `<button class="btn-copy-all" id="copy-all-btn">${icon("copy",15,"#fff")} Copy All Lists</button>` : ""}
+    </div>
+    <div class="week-start-row">
+      <span class="week-start-label">Week starts on</span>
+      <div class="week-start-pills">${dayPills}</div>
     </div>
     <div class="day-rows">${rows}</div>`;
 }
@@ -665,6 +827,21 @@ function attachListeners() {
 
   if (state.tab === "recipes") {
     document.getElementById("search-inp").oninput = e => { state.search = e.target.value; render(); };
+
+    document.querySelectorAll("[data-sort]").forEach(btn => {
+      btn.onclick = () => {
+        state.sortMode = btn.dataset.sort;
+        localStorage.setItem("dp_sortMode", state.sortMode);
+        render();
+      };
+    });
+    document.querySelectorAll("[data-view]").forEach(btn => {
+      btn.onclick = () => {
+        state.viewMode = btn.dataset.view;
+        localStorage.setItem("dp_viewMode", state.viewMode);
+        render();
+      };
+    });
     document.getElementById("add-recipe-btn").onclick = () => openRecipeForm();
     document.getElementById("manage-cats-btn").onclick = () => openCatManager();
 
@@ -690,6 +867,14 @@ function attachListeners() {
       };
     });
   } else {
+    document.querySelectorAll(".day-start-pill").forEach(btn => {
+      btn.onclick = () => {
+        state.weekStart = Number(btn.dataset.start);
+        save(SK.weekStart, state.weekStart);
+        render();
+      };
+    });
+
     document.getElementById("copy-all-btn")?.addEventListener("click", () => {
       const lines = DAYS.map(d => {
         const r = state.plan[d] ? state.recipes.find(rec => rec.id === state.plan[d]) : null;
@@ -703,12 +888,35 @@ function attachListeners() {
     });
     document.querySelectorAll("[data-done]").forEach(btn => {
       btn.onclick = () => {
-        state.recipes = state.recipes.map(r => r.id === btn.dataset.done ? { ...r, lastUsed: new Date().toISOString() } : r);
-        saveRecipes(); toast("Marked as cooked!"); render();
+        const day = btn.dataset.day;
+        const cookKey = day + '_cooked';
+        if (state.plan[cookKey]) {
+          // Untoggle — restore previous lastUsed
+          const prevKey = day + '_prevLastUsed';
+          const prev = state.plan[prevKey] || null;
+          state.recipes = state.recipes.map(r => r.id === btn.dataset.done ? { ...r, lastUsed: prev } : r);
+          delete state.plan[cookKey];
+          delete state.plan[prevKey];
+          saveRecipes(); savePlan(); toast("Unmarked."); render();
+        } else {
+          // Mark as cooked — store previous lastUsed, then update
+          const recipe = state.recipes.find(r => r.id === btn.dataset.done);
+          const prevKey = day + '_prevLastUsed';
+          state.plan[prevKey] = recipe?.lastUsed || null;
+          state.recipes = state.recipes.map(r => r.id === btn.dataset.done ? { ...r, lastUsed: new Date().toISOString() } : r);
+          state.plan[cookKey] = true;
+          saveRecipes(); savePlan(); toast("Marked as cooked!"); render();
+        }
       };
     });
     document.querySelectorAll("[data-remove]").forEach(btn => {
-      btn.onclick = () => { delete state.plan[btn.dataset.remove]; savePlan(); render(); };
+      btn.onclick = () => {
+        const day = btn.dataset.remove;
+        delete state.plan[day];
+        delete state.plan[day + '_cooked'];
+        delete state.plan[day + '_prevLastUsed'];
+        savePlan(); render();
+      };
     });
   }
 }
@@ -1189,6 +1397,23 @@ function openDataPortability() {
   openModal("Export / Import Data", "", 500);
   render();
 }
+
+// ── Dark mode ─────────────────────────────────────────────────────────────────
+function applyDark(dark) {
+  document.body.classList.toggle("dark", dark);
+  const icon = document.getElementById("dark-mode-icon");
+  if (icon) icon.textContent = dark ? "☀️" : "🌙";
+}
+// Load saved preference
+const savedDark = localStorage.getItem("dp_darkMode") === "true";
+applyDark(savedDark);
+
+document.getElementById("dark-mode-btn").onclick = () => {
+  const isDark = document.body.classList.toggle("dark");
+  localStorage.setItem("dp_darkMode", isDark);
+  const icon = document.getElementById("dark-mode-icon");
+  if (icon) icon.textContent = isDark ? "☀️" : "🌙";
+};
 
 // ── PWA install prompt ────────────────────────────────────────────────────────
 let deferredPrompt;
