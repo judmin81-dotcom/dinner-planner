@@ -8,7 +8,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dinner Planner">
 <title>Dinner Planner</title>
-<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -42,59 +41,6 @@
   html, body { height: 100%; }
   body { font-family: var(--font-sans); background: var(--cream-bg); color: var(--brown-dark); -webkit-tap-highlight-color: transparent; }
 
-  /* ── Dark mode ── */
-  body.dark {
-    --brown-dark:  #f5ede8;
-    --brown-mid:   #c4a99a;
-    --brown-light: #8b6f5e;
-    --cream:       #1e1410;
-    --cream-bg:    #150e0a;
-    --border:      #2e1f17;
-    --border-inp:  #3a2820;
-    --orange-light:#2a1a0a;
-    --orange-pale: #4a2505;
-    --green-bg:    #0a1f10;
-    --green-border:#1a4a28;
-    --red-bg:      #2a0a0a;
-    --slate:       #64748b;
-  }
-  body.dark #header { background: #0d0805; }
-  body.dark .modal-box { background: #1e1410; border-color: #2e1f17; }
-  body.dark .modal-header { background: #1e1410; border-color: #2e1f17; }
-  body.dark .inp { background: #150e0a; border-color: #3a2820; color: var(--brown-dark); }
-  body.dark .inp:focus { border-color: var(--orange); }
-  body.dark .recipe-card { background: #1e1410; border-color: #2e1f17; }
-  body.dark .day-row { background: #1e1410; border-color: #2e1f17; }
-  body.dark .week-start-row { background: #1e1410; border-color: #2e1f17; }
-  body.dark .cat-list-item { background: #1e1410; border-color: #2e1f17; }
-  body.dark .notes-box { background: #1a1305; border-color: #3d3010; }
-  body.dark .export-box { background: #0a1a0f; border-color: #1a4a28; }
-  body.dark .import-box { background: #1a0f05; border-color: #4a2e10; }
-  body.dark .import-preview { background: #0a1a0f; border-color: #1a4a28; }
-  body.dark .import-error { background: #2a0a0a; border-color: #5a1a1a; }
-  body.dark .btn-secondary { background: #1e1410; border-color: #3a2820; color: var(--brown-mid); }
-  body.dark .btn-secondary:hover { background: #2e1f17; }
-  body.dark .cat-pill { background: #1e1410; border-color: #3a2820; }
-  body.dark .cat-pill.active { background: #2a1a0a; }
-  body.dark .manage-btn { background: #2a1a0a; border-color: #3a2820; }
-  body.dark .recipe-pick-btn { background: #1e1410; border-color: #2e1f17; }
-  body.dark .recipe-pick-btn:hover { background: #2a1a0a; }
-  body.dark .day-pick-btn { background: #1e1410; border-color: #2e1f17; }
-  body.dark .day-pick-btn:hover { background: #2a1a0a; }
-  body.dark .day-pick-btn.occupied { background: #2a0a0a; }
-  body.dark .check-item { background: #1e1410; border-color: #2e1f17; }
-  body.dark .check-item.checked { background: #150e0a; border-color: #2e1f17; }
-  body.dark .check-box { background: #150e0a; }
-  body.dark .toggle-all-btn { border-color: #3a2820; }
-  body.dark .toggle-all-btn:hover { background: #2e1f17; }
-  body.dark .checklist-summary.needs { background: #1a0f05; border-color: #4a2e10; }
-  body.dark .recipe-link-btn { background: #0a1520; border-color: #1a3a5a; }
-  body.dark .recipe-link-btn:hover { background: #0f1f2e; }
-  body.dark .day-start-pill { background: #150e0a; border-color: #3a2820; }
-  body.dark .day-start-pill.active { background: #2a1a0a; }
-  body.dark #install-banner { background: #0d0805; }
-
-  /* ── Scrollbar ── */
   /* ── Scrollbar ── */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -131,39 +77,6 @@
 
   /* ── Content ── */
   #content { padding: 20px 16px; max-width: 700px; margin: 0 auto; }
-
-  /* ── Recipes toolbar ── */
-  .recipes-toolbar {
-    display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
-  }
-  .toolbar-group { display: flex; gap: 4px; background: var(--cream-bg); border: 1.5px solid var(--border-inp); border-radius: 10px; padding: 3px; }
-  .toolbar-btn {
-    padding: 6px 12px; border-radius: 7px; border: none; background: transparent;
-    font-size: 12px; font-weight: 600; font-family: var(--font-sans); cursor: pointer;
-    color: var(--brown-mid); transition: all 0.12s; display: flex; align-items: center; gap: 5px;
-  }
-  .toolbar-btn.active { background: var(--orange); color: #fff; }
-  .toolbar-btn:not(.active):hover { background: var(--border); }
-
-  /* ── Compact view ── */
-  .compact-list { display: flex; flex-direction: column; gap: 0; border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .compact-row {
-    display: flex; align-items: center; gap: 10px; padding: 11px 16px;
-    border-bottom: 1px solid var(--border); background: var(--cream); cursor: pointer;
-    transition: background 0.12s;
-  }
-  .compact-row:last-child { border-bottom: none; }
-  .compact-row:hover { background: var(--orange-light); }
-  .compact-name { font-size: 14px; font-weight: 600; color: var(--brown-dark); flex: 1; font-family: var(--font-serif); }
-  .compact-cats { display: flex; gap: 5px; flex-shrink: 0; }
-  .compact-fresh { font-size: 11px; font-weight: 600; flex-shrink: 0; }
-  .compact-actions { display: flex; gap: 4px; flex-shrink: 0; }
-
-  body.dark .toolbar-group { background: #150e0a; border-color: #3a2820; }
-  body.dark .toolbar-btn:not(.active):hover { background: #2e1f17; }
-  body.dark .compact-list { border-color: #2e1f17; }
-  body.dark .compact-row { background: #1e1410; border-color: #2e1f17; }
-  body.dark .compact-row:hover { background: #2a1a0a; }
 
   /* ── Search + Add row ── */
   .search-row { display: flex; gap: 10px; margin-bottom: 14px; }
@@ -365,3 +278,81 @@
   .planner-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .planner-title { font-family: var(--font-serif); font-size: 22px; color: var(--brown-dark); font-weight: 700; }
   .btn-copy-all {
+    background: var(--orange); color: #fff; border: none; border-radius: 9px;
+    padding: 9px 16px; font-weight: 700; font-size: 13px; font-family: var(--font-sans);
+    cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.15s;
+  }
+  .btn-copy-all:hover { background: #ea6a05; }
+  .day-rows { display: flex; flex-direction: column; gap: 10px; }
+  .day-row {
+    background: var(--cream); border: 1.5px solid var(--border); border-radius: var(--radius);
+    padding: 14px 18px; display: flex; align-items: center; gap: 14px;
+  }
+  .day-label { width: 90px; font-size: 13px; font-weight: 700; color: var(--brown-mid); text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; }
+  .day-empty-btn {
+    flex: 1; background: transparent; border: 1.5px dashed var(--border-inp); border-radius: 10px;
+    padding: 10px; cursor: pointer; color: var(--brown-light); font-size: 13px;
+    font-weight: 500; text-align: left; font-family: var(--font-sans); transition: border-color 0.15s;
+  }
+  .day-empty-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .day-filled { flex: 1; display: flex; align-items: center; gap: 12px; }
+  .day-recipe-name { font-weight: 600; font-size: 15px; color: var(--brown-dark); font-family: var(--font-serif); }
+  .day-recipe-cats { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .day-done-btn {
+    background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 7px;
+    padding: 5px 9px; cursor: pointer; color: #16a34a; font-size: 12px; font-weight: 600;
+    font-family: var(--font-sans); flex-shrink: 0; transition: background 0.15s;
+  }
+  .day-done-btn:hover { background: #dcfce7; }
+  .day-remove-btn {
+    background: var(--red-bg); border: none; border-radius: 7px; padding: 5px 9px;
+    cursor: pointer; color: var(--red); display: flex; flex-shrink: 0; transition: background 0.15s;
+  }
+  .day-remove-btn:hover { background: #fecaca; }
+
+  /* ── Recipe picker (in planner) ── */
+  .recipe-pick-list { display: flex; flex-direction: column; gap: 8px; max-height: 360px; overflow-y: auto; }
+  .recipe-pick-btn {
+    background: var(--cream); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 12px 14px; cursor: pointer; text-align: left; display: flex;
+    justify-content: space-between; align-items: center; gap: 10px; width: 100%;
+    font-family: var(--font-sans); transition: background 0.15s;
+  }
+  .recipe-pick-btn:hover { background: var(--orange-light); border-color: var(--orange); }
+  .pick-name { font-weight: 600; font-size: 14px; color: var(--brown-dark); margin-bottom: 5px; }
+
+  /* ── Day picker modal ── */
+  .day-pick-list { display: flex; flex-direction: column; gap: 8px; }
+  .day-pick-btn {
+    padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px;
+    cursor: pointer; text-align: left; font-size: 14px; font-weight: 600;
+    color: var(--brown-dark); display: flex; justify-content: space-between;
+    background: var(--cream); font-family: var(--font-sans); transition: background 0.15s;
+  }
+  .day-pick-btn:hover { background: var(--orange-light); border-color: var(--orange); }
+  .day-pick-btn.occupied { background: var(--red-bg); }
+  .day-replaces { font-size: 12px; color: var(--red); }
+
+  /* ── Cat manager ── */
+  .cat-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .cat-list-item {
+    display: flex; align-items: center; gap: 8px; background: var(--cream);
+    border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 12px;
+  }
+  .cat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .cat-name { flex: 1; font-size: 14px; font-weight: 500; }
+  .add-cat-row { display: flex; gap: 8px; margin-bottom: 20px; }
+  .btn-add-cat {
+    background: var(--orange); color: #fff; border: none; border-radius: 8px;
+    padding: 9px 16px; font-weight: 700; cursor: pointer; font-size: 14px;
+    font-family: var(--font-sans); transition: background 0.15s;
+  }
+  .btn-add-cat:hover { background: #ea6a05; }
+
+  /* ── Export/Import ── */
+  .export-box { background: var(--green-bg); border: 1.5px solid var(--green-border); border-radius: 12px; padding: 16px 18px; margin-bottom: 20px; }
+  .export-title { font-family: var(--font-serif); font-size: 15px; color: #15803d; margin-bottom: 6px; }
+  .export-hint { font-size: 13px; color: #166534; line-height: 1.5; margin-bottom: 14px; }
+  .import-box { background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: 12px; padding: 16px 18px; }
+  .import-title { font-family: var(--font-serif); font-size: 15px; color: #c2410c; margin-bottom: 6px; }
+  .import-hint { font-size: 13px; color: #9a3412; line-height: 1.5; margin-bottom: 
