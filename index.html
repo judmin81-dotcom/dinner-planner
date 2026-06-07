@@ -909,9 +909,9 @@ function attachListeners() {
       const lines = DAYS.map(d => {
         const r = state.plan[d] ? state.recipes.find(rec => rec.id === state.plan[d]) : null;
         if (!r) return null;
-        return `📅 ${d}: ${r.name}\n${r.ingredients.filter(Boolean).map(i => `  • ${i}`).join("\n")}`;
+        return r.ingredients.filter(Boolean).join("\n");
       }).filter(Boolean);
-      navigator.clipboard.writeText(lines.join("\n\n")).then(() => toast("All lists copied!"));
+      navigator.clipboard.writeText(lines.join("\n")).then(() => toast("All lists copied!"));
     });
     document.querySelectorAll("[data-pick]").forEach(btn => {
       btn.onclick = () => openDayPicker(btn.dataset.pick);
@@ -1170,7 +1170,7 @@ function openShoppingChecklist(recipe) {
     const copyBtn = document.getElementById("copy-list-btn");
     if (copyBtn && needed.length) {
       copyBtn.onclick = () => {
-        navigator.clipboard.writeText(`🛒 ${recipe.name}\n\n${needed.map(i => `• ${i}`).join("\n")}`).then(() => {
+        navigator.clipboard.writeText(needed.join("\n")).then(() => {
           copyBtn.classList.replace("active","copied");
           copyBtn.innerHTML = `${icon("check",16,"#fff")} Copied!`;
           setTimeout(() => { copyBtn.classList.replace("copied","active"); render(); }, 2500);
@@ -1212,7 +1212,7 @@ function openDayPicker(preDay, preRecipeId) {
 
 // ── Recipe Picker (for planner) ───────────────────────────────────────────────
 function openRecipePicker(day) {
-  function render(search="") {
+  function renderList(search) {
     const list = state.recipes
       .filter(r => r.name.toLowerCase().includes(search.toLowerCase()))
       .map(r => {
@@ -1223,12 +1223,7 @@ function openRecipePicker(day) {
         </button>`;
       }).join("") || `<p style="color:#94a3b8;text-align:center;padding:20px">No recipes found.</p>`;
 
-    document.getElementById("modal-body").innerHTML = `
-      <input class="search-inp" id="picker-search" placeholder="Search recipes…" value="${esc(search)}" style="margin-bottom:14px">
-      <div class="recipe-pick-list">${list}</div>`;
-
-    document.getElementById("picker-search").oninput = e => render(e.target.value);
-    document.getElementById("picker-search").focus();
+    document.getElementById("picker-list").innerHTML = list;
     document.querySelectorAll(".recipe-pick-btn").forEach(btn => {
       btn.onclick = () => {
         state.plan[day] = btn.dataset.id;
@@ -1237,8 +1232,14 @@ function openRecipePicker(day) {
     });
   }
 
-  openModal(`Choose dinner for ${day}`, "");
-  render();
+  openModal(`Choose dinner for ${day}`, `
+    <input class="search-inp" id="picker-search" placeholder="Search recipes…" style="margin-bottom:14px">
+    <div class="recipe-pick-list" id="picker-list"></div>`);
+
+  const inp = document.getElementById("picker-search");
+  renderList("");
+  inp.focus();
+  inp.oninput = e => renderList(e.target.value);
 }
 
 // ── Category Manager ──────────────────────────────────────────────────────────
